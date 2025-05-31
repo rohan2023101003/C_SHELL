@@ -1,57 +1,29 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Iinclude -std=c99
+CFLAGS = -D_GNU_SOURCE -D_DEFAULT_SOURCE
 SRCDIR = src
-INCDIR = include
-OBJDIR = obj
-TARGET = myshell
+TARGET = my_shell
 
-# Get all .c files from src directory
-SOURCES = $(wildcard $(SRCDIR)/*.c)
-# Convert .c files to .o files in obj directory
-OBJECTS = $(SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+# List all source files
+SOURCES = $(SRCDIR)/log.c $(SRCDIR)/reveal.c $(SRCDIR)/main.c $(SRCDIR)/hop.c \
+          $(SRCDIR)/foreground.c $(SRCDIR)/background.c $(SRCDIR)/proclore.c \
+          $(SRCDIR)/seek.c $(SRCDIR)/display.c $(SRCDIR)/myshrc.c $(SRCDIR)/IO.c \
+          $(SRCDIR)/pipe.c $(SRCDIR)/activities.c $(SRCDIR)/sig.c $(SRCDIR)/custom.c \
+          $(SRCDIR)/fg.c $(SRCDIR)/process.c $(SRCDIR)/bg.c $(SRCDIR)/iMan.c $(SRCDIR)/neonate.c
 
-# Default target
+# Default target - compile all at once like your original
 all: $(TARGET)
 
-# Create target executable
-$(TARGET): $(OBJECTS) | $(OBJDIR)
-	$(CC) $(OBJECTS) -o $(TARGET)
+$(TARGET): $(SOURCES)
+	$(CC) $(CFLAGS) -Iinclude $(SOURCES) -o $(TARGET)
 	@echo "Build successful! Executable: $(TARGET)"
-
-# Compile .c files to .o files
-$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# Create obj directory if it doesn't exist
-$(OBJDIR):
-	mkdir -p $(OBJDIR)
 
 # Clean build artifacts
 clean:
-	rm -rf $(OBJDIR)
 	rm -f $(TARGET)
 	@echo "Clean complete"
 
 # Clean and rebuild
 rebuild: clean all
 
-# Install (optional - copy to /usr/local/bin)
-install: $(TARGET)
-	sudo cp $(TARGET) /usr/local/bin/
-
-# Uninstall
-uninstall:
-	sudo rm -f /usr/local/bin/$(TARGET)
-
-# Show help
-help:
-	@echo "Available targets:"
-	@echo "  all      - Build the project (default)"
-	@echo "  clean    - Remove build artifacts"
-	@echo "  rebuild  - Clean and build"
-	@echo "  install  - Install to /usr/local/bin"
-	@echo "  uninstall- Remove from /usr/local/bin"
-	@echo "  help     - Show this help"
-
 # Declare phony targets
-.PHONY: all clean rebuild install uninstall help
+.PHONY: all clean rebuild
